@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log('create message', message);
         //// send to all connected clients
         // io.emit('newMessage', {
@@ -32,7 +32,9 @@ io.on('connection', (socket) => {
         // });
 
         // to send to everyone except to the socket from which it is received, do
-        socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+        //socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+        io.emit('newMessage', generateMessage(message.from, message.text));
+        callback('This is from server'); // this is the same function in index.js which we created in console.log('Got it');
     });
     
     socket.on('disconnect', () => {
