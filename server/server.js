@@ -1,13 +1,29 @@
 const path = require('path');
+const http = require('http');
 const express = require('express');
+const socketIO = require('socket.io');
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
 var app = express();
+// instead of implicity calling the http.server, we will call it explicity
+var server = http.createServer(app);
+// create a websocket to listen and emit
+var io = socketIO(server);
 
 // server the static public page using the middleware
 app.use(express.static(publicPath));
 
-app.listen(port, () => {
+// we are going to register for an event using io.on
+io.on('connection', (socket) => {
+    console.log('New user connected');
+    socket.on('disconnect', () => {
+        console.log('User was disconnected');
+    });
+});
+
+//app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server is up on port ${port}`);
 });
