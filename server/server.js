@@ -19,14 +19,14 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');
 
-    socket.emit('newEmail', {
-        from: 'abc@cisco.com',
-        text: 'Hey, What is going on.',
-        createAt: 123
-    });  
-
-    socket.on('createEmail', (newEmail) => {
-        console.log('create email', newEmail);
+    socket.on('createMessage', (message) => {
+        console.log('create message', message);
+        // send to all connected clients
+        io.emit('newMessage', {
+            from:message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
     });
     
     socket.on('disconnect', () => {
